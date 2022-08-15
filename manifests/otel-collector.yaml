@@ -1,0 +1,88 @@
+apiVersion: v1
+
+kind: ConfigMap
+metadata:
+  name: otel-collector-config
+data:
+  otel-collector-config: |-
+    receivers:
+      otlp:
+        protocols:
+          http:
+          grpc:
+    exporters:
+      logging:
+        loglevel: debug
+      prometheus:
+        endpoint: "0.0.0.0:8889"
+    processors:
+      batch:
+    service:
+      pipelines:
+        metrics:
+          receivers: [otlp]
+          processors: [batch]
+          exporters: [logging, prometheus]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: otel-collector
+  labels:
+    app: otel-collector
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: otel-collector
+  template:
+    metadata:
+      labels:
+        app: otel-collector
+    spec:
+      containers:
+        - name: collector
+          image: otel/opentelemetry-collector:latest
+          args:
+            - --config=/etc/otelconf/otel-collector-config.yaml
+          ports:
+            - name: otel-http
+              containerPort: 4318
+            - name: otel-grpc
+              containerPort: 4317
+            - name: prom-metrics
+              containerPort: 8889
+          volumeMounts:
+            - name: otel-config
+              mountPath: /etc/otelconf
+      volumes:
+        - name: otel-config
+          configMap:
+            name: otel-collector-config
+            items:
+              - key: otel-collector-config
+                path: otel-collector-config.yaml
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: otel-collector
+  labels:
+    app: otel-collector
+spec:
+  type: ClusterIP
+  ports:
+    - name: otel-http
+      port: 4318
+      protocol: TCP
+      targetPort: 4318
+    - name: otel-grpc
+      port: 4317
+      protocol: TCP
+      targetPort: 4317
+    - name: prom-metrics
+      port: 8889
+      protocol: TCP
+      targetPort: prom-metrics
+  selector:
+    app: otel-collector
