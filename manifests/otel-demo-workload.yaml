@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: otel-workload
+  name: otel-workload
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: otel-workload
+  template:
+    metadata:
+      labels:
+        app: otel-workload
+    spec:
+      containers:
+      - image: ghcr.io/cdennig/otel-demo:1.0
+        name: otel-demo
+        env:
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: "http://otel-collector.default.svc.cluster.local:4317"
+        - name: OTEL_EXPORTER_OTLP_PROTOCOL
+          value: "grpc"

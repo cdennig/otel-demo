@@ -9,11 +9,7 @@ builder.Services.AddOpenTelemetryMetrics(metricsProvider =>
 {
     metricsProvider
         .AddConsoleExporter()
-        .AddOtlpExporter(options =>
-        {
-            options.Endpoint = new Uri("http://otel-collector.default.svc.cluster.local:4317");
-            options.Protocol = OtlpExportProtocol.Grpc;
-        })
+        .AddOtlpExporter()
         .AddMeter("otel.demo.metric")
         .SetResourceBuilder(ResourceBuilder.CreateDefault()
             .AddService(serviceName: "otel.demo", serviceVersion: "0.0.1")

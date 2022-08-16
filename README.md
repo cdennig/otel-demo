@@ -1,3 +1,4 @@
+```shell
 dotnet new webapi -minimal -n otel-demo -o .
 
 dotnet add package System.Diagnostics.DiagnosticSource
@@ -30,4 +31,9 @@ prometheus:
       - targets: ["otel-collector.default.svc.cluster.local:8889"]
 EOF
 
+docker build -t otel-demo:1.0 .
+
+kind load --name demo-cluster docker-image otel-demo:1.0
+
 kubectl apply -f ./manifests
+´´´
