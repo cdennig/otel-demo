@@ -19,17 +19,7 @@ kind create cluster --name demo-cluster --config ./kind/kind-cluster.yaml
 helm upgrade --install --wait --timeout 15m \
   --namespace monitoring --create-namespace \
   --repo https://prometheus-community.github.io/helm-charts \
-  kube-prometheus-stack kube-prometheus-stack --values - <<EOF
-kubeEtcd:
-  service:
-    targetPort: 2381
-prometheus:
-  prometheusSpec:
-    additionalScrapeConfigs:
-    - job_name: "demo/otel-collector"
-      static_configs:
-      - targets: ["otel-collector.default.svc.cluster.local:8889"]
-EOF
+  kube-prometheus-stack kube-prometheus-stack --values ./prometheus/values.yaml
 
 docker build -t otel-demo:1.0 .
 

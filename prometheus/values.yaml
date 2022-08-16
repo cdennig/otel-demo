@@ -1,0 +1,9 @@
+kubeEtcd:
+  service:
+    targetPort: 2381
+prometheus:
+  prometheusSpec:
+    additionalScrapeConfigs:
+    - job_name: "demo/otel-collector"
+      static_configs:
+      - targets: ["otel-collector.default.svc.cluster.local:8889"]
