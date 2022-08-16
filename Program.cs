@@ -1,7 +1,6 @@
 using System.Diagnostics.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Metrics;
-using OpenTelemetry.Exporter;
 
 var builder = WebApplication.CreateBuilder(args);
 
