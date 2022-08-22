@@ -24,9 +24,5 @@ kubeadmConfigPatches:
 nodes:
 - role: control-plane
 - role: worker
-  extraPortMappings:
-  - containerPort: 80
-    hostPort: 80
-    listenAddress: "127.0.0.1"
 - role: worker
 - role: worker
